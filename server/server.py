@@ -1,4 +1,3 @@
-# server.py - Email Server CLI dengan Select (Full Features)
 import select
 import socket
 import sys
