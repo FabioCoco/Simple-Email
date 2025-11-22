@@ -6,6 +6,8 @@ import signal
 import pickle
 import struct
 import argparse
+import os
+import json
 from datetime import datetime
 
 # Utilities untuk komunikasi
@@ -64,6 +66,34 @@ class EmailServer(object):
         # Catch keyboard interrupts
         signal.signal(signal.SIGINT, self.sighandler)
     
+    def save_server_data(self):
+        """Simpan state server ke JSON (Panggil ini setiap ada perubahan data)"""
+        data = {
+            'users': self.users,
+            'emails': self.emails,
+            'email_id_counter': self.email_id_counter
+        }
+        try:
+            with open('server_db.json', 'w') as f:
+                json.dump(data, f, indent=2)
+            print("[SERVER] 💾 Data saved successfully.")
+        except Exception as e:
+            print(f"[SERVER] ⚠️ Failed to save data: {e}")
+    
+    def load_server_data(self):
+        """Load state server saat startup"""
+        if os.path.exists('server_db.json'):
+            try:
+                with open('server_db.json', 'r') as f:
+                    data = json.load(f)
+                    self.users = data.get('users', {})
+                    self.emails = data.get('emails', [])
+                    self.email_id_counter = data.get('email_id_counter', 0)
+            except Exception as e:
+                print(f"[SERVER] ⚠️ Database corrupted or empty, starting fresh. Error: {e}")
+        else:
+            print("[SERVER] ℹ️ No database found. Starting fresh.")
+    
     def sighandler(self, signum, frame):
         """Clean up saat shutdown"""
         print('\n\n[SERVER] Shutting down gracefully...')
@@ -77,14 +107,15 @@ class EmailServer(object):
     def handle_register(self, data):
         """Handle REGISTER command: REGISTER|username|password"""
         try:
-            parts = data.split("|")
-            if len(parts) >= 3:
-                _, username, password = parts[:3]
+            parts = data.split("|", 2) 
+            if len(parts) == 3:
+                _, username, password = parts
                 
                 if username in self.users:
                     return "ERROR|Username already exists"
                 
                 self.users[username] = password
+                self.save_server_data()
                 print(f"[REGISTER] ✅ New user: {username}")
                 return f"OK|User {username} registered successfully"
             else:
@@ -135,7 +166,7 @@ class EmailServer(object):
                     'read': False
                 }
                 self.emails.append(email)
-                
+                self.save_server_data()
                 print(f"[SEND] ✉️  Email #{email['id']}: {sender} → {recipient} | '{subject}'")
                 return f"OK|Email sent to {recipient}"
             else:
@@ -215,6 +246,7 @@ class EmailServer(object):
                 # Mark as read if recipient
                 if email['to'] == username:
                     email['read'] = True
+                    self.save_server_data()
                 
                 # Format response: OK|id|from|to|subject|body|timestamp
                 response = f"OK|{email['id']}|{email['from']}|{email['to']}|{email['subject']}|{email['body']}|{email['timestamp']}"
@@ -246,7 +278,7 @@ class EmailServer(object):
                 
                 # Delete email
                 self.emails.remove(email)
-                
+                self.save_server_data()
                 print(f"[DELETE] 🗑️  User {username} deleted email #{msg_id}")
                 return f"OK|Email #{msg_id} deleted"
             else:
