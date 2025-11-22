@@ -286,7 +286,7 @@ class EmailClient(object):
             return
         
         # Send to server
-        command = f"REGISTER|{username}|{password}|"
+        command = f"REGISTER|{username}|{password}"
         response = self.send_command(command)
         
         print()
