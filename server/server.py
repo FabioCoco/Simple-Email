@@ -38,12 +38,14 @@ class EmailServer(object):
         self.clients = 0
         self.clientmap = {}
         self.outputs = []
-        self.load_server_data()
         
         # Database in-memory
         self.users = {}  # {username: password}
         self.emails = []  # List of email dictionaries
         self.email_id_counter = 0
+        
+        # Load existing data
+        self.load_server_data()
         
         # Setup socket server
         self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)

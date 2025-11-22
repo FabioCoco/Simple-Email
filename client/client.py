@@ -646,6 +646,79 @@ class EmailClient(object):
         
         input("\nPress Enter to continue...")
     
+    
+    def resume_draft(self, index, draft_data):
+        """Lanjutkan menulis draft dan kirim"""
+        self.clear_screen()
+        self.print_header(f"📝 RESUME DRAFT #{index + 1}")
+        
+        print(f"Current To: {draft_data.get('to')}")
+        new_to = input("Change To (press Enter to keep): ").strip()
+        recipient = new_to if new_to else draft_data.get('to')
+        
+        print(f"Current Subject: {draft_data.get('subject')}")
+        new_subject = input("Change Subject (press Enter to keep): ").strip()
+        subject = new_subject if new_subject else draft_data.get('subject')
+        
+        subject = subject.replace("|", "-").replace("~", "-")
+        
+        print("\n--- Current Body ---")
+        print(draft_data.get('body', ''))
+        print("--------------------")
+        
+        print("\nOptions: [1] Send as is | [2] Rewrite Body | [0] Cancel")
+        choice = input("Choice: ").strip()
+        
+        final_body = draft_data.get('body', '')
+        
+        if choice == '2':
+            print("\nType new message (type '.' on a new line to finish):")
+            lines = []
+            while True:
+                line = input()
+                if line == '.':
+                    break
+                lines.append(line)
+            final_body = '\n'.join(lines)
+            if not final_body:
+                print("❌ Body cannot be empty! Keeping old body.")
+                final_body = draft_data.get('body', '')
+        elif choice == '0':
+            return
+            
+        print("\n🔄 Sending email...")
+        command = f"SEND|{self.username}|{recipient}|{subject}|{final_body}"
+        response = self.send_command(command)
+        
+        if response.startswith("OK"):
+            print(f"✅ {response.split('|')[1]}")
+            
+            self.delete_draft(index)
+            print("🗑️  Draft deleted from local storage.")
+
+            self.sync_sent()
+            self.save_user_data()
+        else:
+            print(f"❌ Failed to send: {response.split('|')[1]}")
+            print("⚠️  Draft kept in storage.")
+            
+        input("\nPress Enter to continue...")
+    
+    
+    def delete_draft(self, index):
+        """Hapus draft spesifik berdasarkan index setelah dikirim"""
+        draft_file = os.path.join(self.data_dir, f"{self.username}_drafts.json")
+        drafts = self.load_drafts()
+        
+        if 0 <= index < len(drafts):
+            del drafts[index] 
+            
+            try:
+                with open(draft_file, 'w', encoding='utf-8') as f:
+                    json.dump(drafts, f, indent=2, ensure_ascii=False)
+            except Exception as e:
+                print(f"⚠️  Failed to update drafts file: {e}")
+    
     def view_drafts(self):
         """View saved drafts"""
         self.clear_screen()
@@ -667,7 +740,16 @@ class EmailClient(object):
             print(f"    Saved: {draft.get('timestamp', 'N/A')}")
             self.print_separator()
         
-        input("\nPress Enter to continue...")
+        print("\nOptions: Enter Draft ID to resume/send | [0] Back")
+        choice = input("Choice: ").strip()
+        
+        if choice.isdigit():
+            idx = int(choice) - 1
+            if 0 <= idx < len(drafts):
+                self.resume_draft(idx, drafts[idx])
+            elif idx != -1: # -1 karena user input 0 dikurang 1
+                print("❌ Invalid Draft ID!")
+                input("Press Enter to continue...")
     
     def view_status(self):
         """View account status"""
