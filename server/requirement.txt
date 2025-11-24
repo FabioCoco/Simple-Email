@@ -1,0 +1,22 @@
+# SigMail Server - Requirements
+#
+# INSTALASI:
+# install dengan command:
+#   pip install -r requirement.txt
+#   atau
+#   pip3 install -r requirement.txt
+#
+# Dependencies yang digunakan (semua built-in):
+# - select (built-in)
+# - socket (built-in)
+# - sys (built-in)
+# - signal (built-in)
+# - pickle (built-in)
+# - struct (built-in)
+# - argparse (built-in)
+# - os (built-in)
+# - json (built-in)
+# - datetime (built-in)
+
+
+

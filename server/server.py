@@ -53,10 +53,10 @@ class EmailServer(object):
         self.server.bind((host, port))
         
         print("=" * 70)
-        print("📧 EMAIL SERVER - CLI MODE")
+        print("EMAIL SERVER - CLI MODE")
         print("=" * 70)
-        print(f"🌐 Server Address: {host}:{port}")
-        print(f"📊 Status: RUNNING")
+        print(f"Server Address: {host}:{port}")
+        print(f"Status: RUNNING")
         print(f"⏰ Started at: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
         print("=" * 70)
         print("\n[SERVER] Listening for connections...")
@@ -77,9 +77,9 @@ class EmailServer(object):
         try:
             with open('server_db.json', 'w') as f:
                 json.dump(data, f, indent=2)
-            print("[SERVER] 💾 Data saved successfully.")
+            print("[SERVER] Data saved successfully.")
         except Exception as e:
-            print(f"[SERVER] ⚠️ Failed to save data: {e}")
+            print(f"[SERVER] Failed to save data: {e}")
     
     def load_server_data(self):
         """Load state server saat startup"""
@@ -91,9 +91,9 @@ class EmailServer(object):
                     self.emails = data.get('emails', [])
                     self.email_id_counter = data.get('email_id_counter', 0)
             except Exception as e:
-                print(f"[SERVER] ⚠️ Database corrupted or empty, starting fresh. Error: {e}")
+                print(f"[SERVER] Database corrupted or empty, starting fresh. Error: {e}")
         else:
-            print("[SERVER] ℹ️ No database found. Starting fresh.")
+            print("[SERVER] No database found. Starting fresh.")
     
     def sighandler(self, signum, frame):
         """Clean up saat shutdown"""
@@ -117,7 +117,7 @@ class EmailServer(object):
                 
                 self.users[username] = password
                 self.save_server_data()
-                print(f"[REGISTER] ✅ New user: {username}")
+                print(f"[REGISTER] New user: {username}")
                 return f"OK|User {username} registered successfully"
             else:
                 return "ERROR|Invalid REGISTER format"
@@ -137,7 +137,7 @@ class EmailServer(object):
                 if self.users[username] != password:
                     return "ERROR|Invalid password"
                 
-                print(f"[LOGIN] ✅ User logged in: {username}")
+                print(f"[LOGIN] User logged in: {username}")
                 return f"OK|Welcome {username}!"
             else:
                 return "ERROR|Invalid LOGIN format"
@@ -168,7 +168,7 @@ class EmailServer(object):
                 }
                 self.emails.append(email)
                 self.save_server_data()
-                print(f"[SEND] ✉️  Email #{email['id']}: {sender} → {recipient} | '{subject}'")
+                print(f"[SEND] Email #{email['id']}: {sender} → {recipient} | '{subject}'")
                 return f"OK|Email sent to {recipient}"
             else:
                 return "ERROR|Invalid SEND format (need: SEND|from|to|subject|body)"
@@ -194,7 +194,7 @@ class EmailServer(object):
                     status = "READ" if email['read'] else "UNREAD"
                     response += f"{email['id']}~{email['from']}~{email['subject']}~{email['timestamp']}~{status};"
                 
-                print(f"[INBOX] 📥 User {username} has {len(inbox)} email(s)")
+                print(f"[INBOX] User {username} has {len(inbox)} email(s)")
                 return response.rstrip(';')
             else:
                 return "ERROR|Invalid INBOX format"
@@ -219,7 +219,7 @@ class EmailServer(object):
                 for email in sent:
                     response += f"{email['id']}~{email['to']}~{email['subject']}~{email['timestamp']};"
                 
-                print(f"[SENT] 📤 User {username} has sent {len(sent)} email(s)")
+                print(f"[SENT] User {username} has sent {len(sent)} email(s)")
                 return response.rstrip(';')
             else:
                 return "ERROR|Invalid SENT format"
@@ -252,7 +252,7 @@ class EmailServer(object):
                 # Format response: OK|id|from|to|subject|body|timestamp
                 response = f"OK|{email['id']}|{email['from']}|{email['to']}|{email['subject']}|{email['body']}|{email['timestamp']}"
                 
-                print(f"[READ] 👁️  User {username} read email #{msg_id}")
+                print(f"[READ] User {username} read email #{msg_id}")
                 return response
             else:
                 return "ERROR|Invalid READ format"
@@ -280,7 +280,7 @@ class EmailServer(object):
                 # Delete email
                 self.emails.remove(email)
                 self.save_server_data()
-                print(f"[DELETE] 🗑️  User {username} deleted email #{msg_id}")
+                print(f"[DELETE] User {username} deleted email #{msg_id}")
                 return f"OK|Email #{msg_id} deleted"
             else:
                 return "ERROR|Invalid DELETE format"
@@ -322,7 +322,7 @@ class EmailServer(object):
                 }
                 self.emails.append(forwarded)
                 
-                print(f"[FORWARD] ↪️  User {username} forwarded email #{msg_id} to {new_recipient}")
+                print(f"[FORWARD] User {username} forwarded email #{msg_id} to {new_recipient}")
                 return f"OK|Email forwarded to {new_recipient}"
             else:
                 return "ERROR|Invalid FORWARD format"
@@ -357,7 +357,7 @@ class EmailServer(object):
                     f"\n{email['body']}\n"
                 )
                 
-                print(f"[EXPORT] 📤 Sending email content #{msg_id} to client")
+                print(f"[EXPORT] Sending email content #{msg_id} to client")
                 return f"OK|Email exported to {filename}|{content}"
             else:
                 return "ERROR|Invalid EXPORT format"
@@ -428,7 +428,7 @@ class EmailServer(object):
                 if sock == self.server:
                     # Handle koneksi baru
                     client, address = self.server.accept()
-                    print(f"[SERVER] 🔌 New connection from {address[0]}:{address[1]}")
+                    print(f"[SERVER] New connection from {address[0]}:{address[1]}")
                     
                     self.clients += 1
                     inputs.append(client)
@@ -443,20 +443,20 @@ class EmailServer(object):
                             # Log command (hide password)
                             cmd_log = data.split("|")[0]
                             if "LOGIN" in data or "REGISTER" in data:
-                                print(f"[SERVER] 📨 Command: {cmd_log} (credentials hidden)")
+                                print(f"[SERVER] Command: {cmd_log} (credentials hidden)")
                             else:
-                                print(f"[SERVER] 📨 Command: {data[:80]}...")
+                                print(f"[SERVER] Command: {data[:80]}...")
                             
                             # Process command
                             response = self.process_command(data)
                             
                             # Send response
                             send(sock, response)
-                            print(f"[SERVER] 📤 Response: {response[:80]}...")
+                            print(f"[SERVER] Response: {response[:80]}...")
                             
                         else:
                             # Client disconnect
-                            print(f"[SERVER] 🔌 Client {self.clientmap[sock]} disconnected")
+                            print(f"[SERVER] Client {self.clientmap[sock]} disconnected")
                             self.clients -= 1
                             sock.close()
                             inputs.remove(sock)
@@ -465,7 +465,7 @@ class EmailServer(object):
                             del self.clientmap[sock]
                             
                     except socket.error as e:
-                        print(f"[SERVER] ❌ Socket error: {e}")
+                        print(f"[SERVER] Socket error: {e}")
                         if sock in inputs:
                             inputs.remove(sock)
                         if sock in self.outputs:
@@ -476,7 +476,7 @@ class EmailServer(object):
         self.server.close()
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='📧 SigMail Server - CLI Mode with Select')
+    parser = argparse.ArgumentParser(description='SigMail Server - CLI Mode with Select')
     parser.add_argument('--host', default='0.0.0.0',
                         help='Server host address (default: 0.0.0.0)')
     parser.add_argument('--port', type=int, default=9000,

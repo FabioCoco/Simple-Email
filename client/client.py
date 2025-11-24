@@ -63,13 +63,13 @@ class EmailClient(object):
             self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self.sock.connect((self.host, self.port))
             self.connected = True
-            print(f"🔌 Connected to server {self.host}:{self.port}")
+            print(f"Connected to server {self.host}:{self.port}")
             return True
         except ConnectionRefusedError:
-            print("❌ Cannot connect to server. Make sure server is running.")
+            print("Cannot connect to server. Make sure server is running.")
             return False
         except Exception as e:
-            print(f"❌ Connection error: {e}")
+            print(f"Connection error: {e}")
             return False
     
     def disconnect_from_server(self):
@@ -80,7 +80,7 @@ class EmailClient(object):
             except:
                 pass
             self.connected = False
-            print("🔌 Disconnected from server")
+            print("Disconnected from server")
     
     def send_command(self, command, wait_response=True):
         """Kirim command dan terima response dengan select"""
@@ -126,9 +126,9 @@ class EmailClient(object):
         try:
             with open(self.user_data_file, 'w', encoding='utf-8') as f:
                 json.dump(user_data, f, indent=2, ensure_ascii=False)
-            print(f"💾 Data saved to {self.user_data_file}")
+            print(f"Data saved to {self.user_data_file}")
         except Exception as e:
-            print(f"⚠️  Failed to save data: {e}")
+            print(f"Failed to save data: {e}")
     
     def load_user_data(self):
         """Load data user dari file lokal"""
@@ -142,9 +142,9 @@ class EmailClient(object):
                 with open(self.user_data_file, 'r', encoding='utf-8') as f:
                     user_data = json.load(f)
                     self.cache = user_data.get('cache', self.cache)
-                    print(f"📂 Loaded cached data from {self.user_data_file}")
+                    print(f"Loaded cached data from {self.user_data_file}")
             except Exception as e:
-                print(f"⚠️  Failed to load data: {e}")
+                print(f"Failed to load data: {e}")
     
     def save_draft(self, draft_data):
         """Simpan draft email"""
@@ -164,9 +164,9 @@ class EmailClient(object):
         try:
             with open(draft_file, 'w', encoding='utf-8') as f:
                 json.dump(drafts, f, indent=2, ensure_ascii=False)
-            print(f"💾 Draft saved!")
+            print(f"Draft saved!")
         except Exception as e:
-            print(f"⚠️  Failed to save draft: {e}")
+            print(f"Failed to save draft: {e}")
     
     def load_drafts(self):
         """Load draft emails"""
@@ -190,7 +190,7 @@ class EmailClient(object):
             return []
         
         if not response.startswith("OK"):
-            print(f"⚠️  Sync failed: {response}")
+            print(f"Sync failed: {response}")
             return self.cache['inbox']  # Return cached data
         
         # Parse response
@@ -265,23 +265,23 @@ class EmailClient(object):
     def register(self):
         """Register new user"""
         self.clear_screen()
-        self.print_header("📝 REGISTER NEW ACCOUNT")
+        self.print_header("REGISTER NEW ACCOUNT")
         
         username = input("Enter username: ").strip()
         if not username:
-            print("❌ Username cannot be empty!")
+            print("Username cannot be empty!")
             input("Press Enter to continue...")
             return
         
         password = input("Enter password: ").strip()
         if not password:
-            print("❌ Password cannot be empty!")
+            print("Password cannot be empty!")
             input("Press Enter to continue...")
             return
         
         confirm = input("Confirm password: ").strip()
         if password != confirm:
-            print("❌ Passwords do not match!")
+            print("Passwords do not match!")
             input("Press Enter to continue...")
             return
         
@@ -291,26 +291,26 @@ class EmailClient(object):
         
         print()
         if response.startswith("OK"):
-            print(f"✅ {response.split('|')[1]}")
+            print(f"{response.split('|')[1]}")
         else:
-            print(f"❌ {response.split('|')[1]}")
+            print(f"{response.split('|')[1]}")
         
         input("\nPress Enter to continue...")
     
     def login(self):
         """Login user"""
         self.clear_screen()
-        self.print_header("🔐 LOGIN")
+        self.print_header("LOGIN")
         
         username = input("Enter username: ").strip()
         if not username:
-            print("❌ Username cannot be empty!")
+            print("Username cannot be empty!")
             input("Press Enter to continue...")
             return False
         
         password = input("Enter password: ").strip()
         if not password:
-            print("❌ Password cannot be empty!")
+            print("Password cannot be empty!")
             input("Press Enter to continue...")
             return False
         
@@ -326,37 +326,37 @@ class EmailClient(object):
             # Load cached data
             self.load_user_data()
             
-            print(f"✅ {response.split('|')[1]}")
-            print(f"📂 User data directory: {self.data_dir}")
+            print(f"{response.split('|')[1]}")
+            print(f"User data directory: {self.data_dir}")
             
             # Sync data from server
-            print("\n🔄 Syncing data from server...")
+            print("\nSyncing data from server...")
             self.sync_inbox()
             self.sync_sent()
-            print("✅ Sync completed!")
+            print("Sync completed!")
             
             input("\nPress Enter to continue...")
             return True
         else:
-            print(f"❌ {response.split('|')[1]}")
+            print(f"{response.split('|')[1]}")
             input("\nPress Enter to continue...")
             return False
     
     def compose_email(self):
         """Compose and send email"""
         self.clear_screen()
-        self.print_header(f"✉️  COMPOSE EMAIL (From: {self.username})")
+        self.print_header(f"COMPOSE EMAIL (From: {self.username})")
         
         recipient = input("To: ").strip()
         if not recipient:
-            print("❌ Recipient cannot be empty!")
+            print("Recipient cannot be empty!")
             input("Press Enter to continue...")
             return
         
         subject = input("Subject: ").strip()
         subject = subject.replace("|", "-").replace("~", "-").replace(";", ",")
         if not subject:
-            print("❌ Subject cannot be empty!")
+            print("Subject cannot be empty!")
             input("Press Enter to continue...")
             return
         
@@ -380,7 +380,7 @@ class EmailClient(object):
         body = '\n'.join(lines)
         
         if not body:
-            print("❌ Message body cannot be empty!")
+            print("Message body cannot be empty!")
             input("Press Enter to continue...")
             return
         
@@ -390,20 +390,20 @@ class EmailClient(object):
         
         print()
         if response.startswith("OK"):
-            print(f"✅ {response.split('|')[1]}")
+            print(f"{response.split('|')[1]}")
             
             # Update cache
             self.sync_sent()
             self.save_user_data()
         else:
-            print(f"❌ {response.split('|')[1]}")
+            print(f"{response.split('|')[1]}")
         
         input("\nPress Enter to continue...")
     
     def view_inbox(self):
         """View inbox with cached data"""
         self.clear_screen()
-        self.print_header(f"📥 INBOX ({self.username})")
+        self.print_header(f"INBOX ({self.username})")
         
         # Show last sync time
         if self.cache['last_sync']:
@@ -413,24 +413,24 @@ class EmailClient(object):
         choice = input("\nChoice: ").strip().upper()
         
         if choice == 'R' or not self.cache['inbox']:
-            print("\n🔄 Refreshing inbox...")
+            print("\nRefreshing inbox...")
             emails = self.sync_inbox()
             self.save_user_data()
         else:
             emails = self.cache['inbox']
         
         if not emails:
-            print("\n📭 No emails in inbox.")
+            print("\nNo emails in inbox.")
             input("\nPress Enter to continue...")
             return
         
         self.clear_screen()
-        self.print_header(f"📥 INBOX ({self.username})")
+        self.print_header(f"INBOX ({self.username})")
         print(f"\nTotal: {len(emails)} email(s)\n")
         self.print_separator()
         
         for email in emails:
-            status = "📖" if email['read'] else "📩"
+            status = "[READ]" if email['read'] else "[UNREAD]"
             print(f"{status} [{email['id']}] From: {email['from']}")
             print(f"    Subject: {email['subject']}")
             print(f"    Date: {email['timestamp']}")
@@ -447,20 +447,20 @@ class EmailClient(object):
                 try:
                     self.read_email(int(choice))
                 except ValueError:
-                    print("❌ Invalid email ID!")
+                    print("Invalid email ID!")
                     input("Press Enter to continue...")
     
     def read_email(self, msg_id):
         """Read specific email"""
         self.clear_screen()
-        self.print_header(f"📧 READ EMAIL #{msg_id}")
+        self.print_header(f"READ EMAIL #{msg_id}")
         
         # Get email
         command = f"READ|{self.username}|{msg_id}"
         response = self.send_command(command)
         
         if not response.startswith("OK"):
-            print(f"❌ {response.split('|')[1]}")
+            print(f"{response.split('|')[1]}")
             input("\nPress Enter to continue...")
             return
         
@@ -512,7 +512,7 @@ class EmailClient(object):
     def reply_email(self, original_email):
         """Reply to email"""
         self.clear_screen()
-        self.print_header(f"↩️  REPLY TO: {original_email['from']}")
+        self.print_header(f"REPLY TO: {original_email['from']}")
         
         print(f"Original Subject: {original_email['subject']}")
         print(f"\nYour reply (type '.' on a new line to finish):")
@@ -527,7 +527,7 @@ class EmailClient(object):
         body = '\n'.join(lines)
         
         if not body:
-            print("❌ Reply cannot be empty!")
+            print("Reply cannot be empty!")
             input("Press Enter to continue...")
             return
         
@@ -539,30 +539,30 @@ class EmailClient(object):
         response = self.send_command(command)
         
         if response.startswith("OK"):
-            print(f"\n✅ Reply sent!")
+            print(f"\nReply sent!")
             self.sync_sent()
             self.save_user_data()
         else:
-            print(f"\n❌ {response.split('|')[1]}")
+            print(f"\n{response.split('|')[1]}")
         
         input("\nPress Enter to continue...")
     
     def delete_email(self, msg_id):
         """Delete email"""
-        confirm = input(f"\n⚠️  Delete email #{msg_id}? (y/n): ").strip().lower()
+        confirm = input(f"\nDelete email #{msg_id}? (y/n): ").strip().lower()
         
         if confirm == 'y':
             command = f"DELETE|{self.username}|{msg_id}"
             response = self.send_command(command)
             
             if response.startswith("OK"):
-                print(f"✅ {response.split('|')[1]}")
+                print(f"{response.split('|')[1]}")
                 
                 # Update cache
                 self.sync_inbox()
                 self.save_user_data()
             else:
-                print(f"❌ {response.split('|')[1]}")
+                print(f"{response.split('|')[1]}")
         
         input("\nPress Enter to continue...")
     
@@ -571,7 +571,7 @@ class EmailClient(object):
         recipient = input("\nForward to (username): ").strip()
         
         if not recipient:
-            print("❌ Recipient cannot be empty!")
+            print("Recipient cannot be empty!")
             input("Press Enter to continue...")
             return
         
@@ -579,11 +579,11 @@ class EmailClient(object):
         response = self.send_command(command)
         
         if response.startswith("OK"):
-            print(f"✅ {response.split('|')[1]}")
+            print(f"{response.split('|')[1]}")
             self.sync_sent()
             self.save_user_data()
         else:
-            print(f"❌ {response.split('|')[1]}")
+            print(f"{response.split('|')[1]}")
         
         input("\nPress Enter to continue...")
     
@@ -603,43 +603,43 @@ class EmailClient(object):
                 try:
                     with open(filepath, 'w', encoding='utf-8') as f:
                         f.write(content)
-                    print(f"✅ Email exported successfully to: {filepath}")
+                    print(f"Email exported successfully to: {filepath}")
                 except Exception as e:
-                    print(f"❌ Failed to write file: {e}")
+                    print(f"Failed to write file: {e}")
             else:
-                print("❌ Invalid response format from server")
+                print("Invalid response format from server")
         else:
-            print(f"❌ {response.split('|')[1]}")
+            print(f"{response.split('|')[1]}")
         
         input("\nPress Enter to continue...")
     
     def view_sent(self):
         """View sent emails"""
         self.clear_screen()
-        self.print_header(f"📤 SENT EMAILS ({self.username})")
+        self.print_header(f"SENT EMAILS ({self.username})")
         
         print("\nOptions: [R]efresh | [0] Back")
         choice = input("\nChoice: ").strip().upper()
         
         if choice == 'R' or not self.cache['sent']:
-            print("\n🔄 Refreshing sent emails...")
+            print("\nRefreshing sent emails...")
             emails = self.sync_sent()
             self.save_user_data()
         else:
             emails = self.cache['sent']
         
         if not emails:
-            print("\n📭 No sent emails.")
+            print("\nNo sent emails.")
             input("\nPress Enter to continue...")
             return
         
         self.clear_screen()
-        self.print_header(f"📤 SENT EMAILS ({self.username})")
+        self.print_header(f"SENT EMAILS ({self.username})")
         print(f"\nTotal: {len(emails)} email(s)\n")
         self.print_separator()
         
         for email in emails:
-            print(f"📨 [{email['id']}] To: {email['to']}")
+            print(f"[{email['id']}] To: {email['to']}")
             print(f"    Subject: {email['subject']}")
             print(f"    Date: {email['timestamp']}")
             self.print_separator()
@@ -650,7 +650,7 @@ class EmailClient(object):
     def resume_draft(self, index, draft_data):
         """Lanjutkan menulis draft dan kirim"""
         self.clear_screen()
-        self.print_header(f"📝 RESUME DRAFT #{index + 1}")
+        self.print_header(f"RESUME DRAFT #{index + 1}")
         
         print(f"Current To: {draft_data.get('to')}")
         new_to = input("Change To (press Enter to keep): ").strip()
@@ -681,26 +681,26 @@ class EmailClient(object):
                 lines.append(line)
             final_body = '\n'.join(lines)
             if not final_body:
-                print("❌ Body cannot be empty! Keeping old body.")
+                print("Body cannot be empty! Keeping old body.")
                 final_body = draft_data.get('body', '')
         elif choice == '0':
             return
             
-        print("\n🔄 Sending email...")
+        print("\nSending email...")
         command = f"SEND|{self.username}|{recipient}|{subject}|{final_body}"
         response = self.send_command(command)
         
         if response.startswith("OK"):
-            print(f"✅ {response.split('|')[1]}")
+            print(f"{response.split('|')[1]}")
             
             self.delete_draft(index)
-            print("🗑️  Draft deleted from local storage.")
+            print("Draft deleted from local storage.")
 
             self.sync_sent()
             self.save_user_data()
         else:
-            print(f"❌ Failed to send: {response.split('|')[1]}")
-            print("⚠️  Draft kept in storage.")
+            print(f"Failed to send: {response.split('|')[1]}")
+            print("Draft kept in storage.")
             
         input("\nPress Enter to continue...")
     
@@ -717,17 +717,17 @@ class EmailClient(object):
                 with open(draft_file, 'w', encoding='utf-8') as f:
                     json.dump(drafts, f, indent=2, ensure_ascii=False)
             except Exception as e:
-                print(f"⚠️  Failed to update drafts file: {e}")
+                print(f"Failed to update drafts file: {e}")
     
     def view_drafts(self):
         """View saved drafts"""
         self.clear_screen()
-        self.print_header(f"📝 DRAFTS ({self.username})")
+        self.print_header(f"DRAFTS ({self.username})")
         
         drafts = self.load_drafts()
         
         if not drafts:
-            print("\n📭 No drafts saved.")
+            print("\nNo drafts saved.")
             input("\nPress Enter to continue...")
             return
         
@@ -735,7 +735,7 @@ class EmailClient(object):
         self.print_separator()
         
         for i, draft in enumerate(drafts, 1):
-            print(f"📝 [{i}] To: {draft.get('to', 'N/A')}")
+            print(f"[{i}] To: {draft.get('to', 'N/A')}")
             print(f"    Subject: {draft.get('subject', 'N/A')}")
             print(f"    Saved: {draft.get('timestamp', 'N/A')}")
             self.print_separator()
@@ -748,13 +748,13 @@ class EmailClient(object):
             if 0 <= idx < len(drafts):
                 self.resume_draft(idx, drafts[idx])
             elif idx != -1: # -1 karena user input 0 dikurang 1
-                print("❌ Invalid Draft ID!")
+                print("Invalid Draft ID!")
                 input("Press Enter to continue...")
     
     def view_status(self):
         """View account status"""
         self.clear_screen()
-        self.print_header(f"📊 ACCOUNT STATUS ({self.username})")
+        self.print_header(f"ACCOUNT STATUS ({self.username})")
         
         command = f"STATUS|{self.username}"
         response = self.send_command(command)
@@ -764,10 +764,10 @@ class EmailClient(object):
             print(f"\n{parts[1]}")
             print(f"{parts[2]}")
         else:
-            print(f"❌ {response.split('|')[1]}")
+            print(f"{response.split('|')[1]}")
         
         # Show cache info
-        print(f"\n💾 Cached Data:")
+        print(f"\nCached Data:")
         print(f"   - Inbox: {len(self.cache['inbox'])} emails")
         print(f"   - Sent: {len(self.cache['sent'])} emails")
         print(f"   - Last sync: {self.cache['last_sync']}")
@@ -782,16 +782,16 @@ class EmailClient(object):
         """Main menu after login"""
         while self.logged_in:
             self.clear_screen()
-            self.print_header(f"📧 SIGMAIL - Welcome {self.username}!")
+            self.print_header(f"SIGMAIL - Welcome {self.username}!")
             
-            print("\n1. 📥 View Inbox")
-            print("2. 📤 View Sent")
-            print("3. ✉️  Compose Email")
-            print("4. 📝 View Drafts")
-            print("5. 📊 Account Status")
-            print("6. 🔄 Sync All Data")
-            print("7. 🚪 Logout")
-            print("8. ❌ Exit")
+            print("\n1. View Inbox")
+            print("2. View Sent")
+            print("3. Compose Email")
+            print("4. View Drafts")
+            print("5. Account Status")
+            print("6. Sync All Data")
+            print("7. Logout")
+            print("8. Exit")
             
             choice = input("\nChoose option [1-8]: ").strip()
             
@@ -806,11 +806,11 @@ class EmailClient(object):
             elif choice == '5':
                 self.view_status()
             elif choice == '6':
-                print("\n🔄 Syncing all data...")
+                print("\nSyncing all data...")
                 self.sync_inbox()
                 self.sync_sent()
                 self.save_user_data()
-                print("✅ Sync completed!")
+                print("Sync completed!")
                 input("Press Enter to continue...")
             elif choice == '7':
                 # Save data before logout
@@ -818,41 +818,41 @@ class EmailClient(object):
                 self.disconnect_from_server()
                 self.logged_in = False
                 self.username = None
-                print("\n👋 Logged out successfully!")
+                print("\nLogged out successfully!")
                 input("Press Enter to continue...")
             elif choice == '8':
                 self.save_user_data()
                 self.disconnect_from_server()
-                print("\n👋 Goodbye!")
+                print("\nGoodbye!")
                 sys.exit(0)
             else:
-                print("❌ Invalid option!")
+                print("Invalid option!")
                 input("Press Enter to continue...")
     
     def run(self):
         """Main client loop"""
         # Connect to server
         if not self.connect_to_server():
-            print("❌ Cannot start client without server connection!")
+            print("Cannot start client without server connection!")
             sys.exit(1)
         
         self.clear_screen()
         print("=" * 70)
-        print("  📧 SIGMAIL CLIENT - CLI MODE with SELECT")
+        print("  SIGMAIL CLIENT - CLI MODE with SELECT")
         print("=" * 70)
-        print(f"  🌐 Server: {self.host}:{self.port}")
-        print(f"  💾 Data Directory: {self.data_dir}")
+        print(f"  Server: {self.host}:{self.port}")
+        print(f"  Data Directory: {self.data_dir}")
         print("=" * 70)
         
         try:
             while True:
                 if not self.logged_in:
                     self.clear_screen()
-                    self.print_header("📧 SIGMAIL - Welcome!")
+                    self.print_header("SIGMAIL - Welcome!")
                     
-                    print("\n1. 🔐 Login")
-                    print("2. 📝 Register")
-                    print("3. ❌ Exit")
+                    print("\n1. Login")
+                    print("2. Register")
+                    print("3. Exit")
                     
                     choice = input("\nChoose option [1-3]: ").strip()
                     
@@ -862,10 +862,10 @@ class EmailClient(object):
                     elif choice == '2':
                         self.register()
                     elif choice == '3':
-                        print("\n👋 Goodbye!")
+                        print("\nGoodbye!")
                         break
                     else:
-                        print("❌ Invalid option!")
+                        print("Invalid option!")
                         input("Press Enter to continue...")
                 else:
                     self.main_menu()
@@ -873,7 +873,7 @@ class EmailClient(object):
             self.disconnect_from_server()
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='📧 SigMail Client - CLI Mode with Select')
+    parser = argparse.ArgumentParser(description='SigMail Client - CLI Mode with Select')
     parser.add_argument('--host', default='127.0.0.1',
                         help='Server host address (default: 127.0.0.1)')
     parser.add_argument('--port', type=int, default=9000,
@@ -886,6 +886,6 @@ if __name__ == "__main__":
     try:
         client.run()
     except KeyboardInterrupt:
-        print("\n\n👋 Client interrupted. Goodbye!")
+        print("\n\nClient interrupted. Goodbye!")
         client.disconnect_from_server()
         sys.exit(0)
