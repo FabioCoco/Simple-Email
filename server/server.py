@@ -57,7 +57,7 @@ class EmailServer(object):
         print("=" * 70)
         print(f"Server Address: {host}:{port}")
         print(f"Status: RUNNING")
-        print(f"⏰ Started at: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+        print(f"Started at: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
         print("=" * 70)
         print("\n[SERVER] Listening for connections...")
         print("[SERVER] Press Ctrl+C to shutdown\n")
