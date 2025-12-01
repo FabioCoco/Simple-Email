@@ -1,4 +1,3 @@
-# client.py - Email Client CLI dengan Select + Data Caching
 import select
 import socket
 import sys
