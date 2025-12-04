@@ -68,7 +68,7 @@ class EmailServer(object):
         signal.signal(signal.SIGINT, self.sighandler)
     
     def save_server_data(self):
-        """Simpan state server ke JSON (Panggil ini setiap ada perubahan data)"""
+        """Simpan state server ke JSON"""
         data = {
             'users': self.users,
             'emails': self.emails,
@@ -147,7 +147,7 @@ class EmailServer(object):
     def handle_send(self, data):
         """Handle SEND command: SEND|from|to|subject|body"""
         try:
-            parts = data.split("|", 4)  # Split max 5 parts
+            parts = data.split("|", 4)  
             if len(parts) == 5:
                 _, sender, recipient, subject, body = parts
                 
